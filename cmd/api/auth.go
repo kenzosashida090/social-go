@@ -95,6 +95,10 @@ func (app *application) registerUserHandler(w http.ResponseWriter, r *http.Reque
 		}
 	}
 	err = app.store.Users.Delete(ctx, user.ID)
+	if err != nil {
+		app.intertalServerError(w, r, err)
+
+	}
 	err = app.store.Users.Deactivate(ctx, user.ID)
 	if err != nil {
 		app.intertalServerError(w, r, err)
