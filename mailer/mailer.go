@@ -47,7 +47,9 @@ func CreateTemplate(templ string, data any, nameTemplate string, emailbody *Mail
 
 	var body bytes.Buffer
 	err = t.Execute(&body, data)
-
+	if err != nil {
+		return []byte(""), err
+	}
 	return []byte(
 		"FROM: " + emailbody.fromEmail + "\r\n" +
 			emailbody.to +
