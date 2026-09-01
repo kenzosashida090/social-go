@@ -86,6 +86,10 @@ func (app *application) createPostHandler(w http.ResponseWriter, r *http.Request
 func (app *application) getPostIdHandler(w http.ResponseWriter, r *http.Request) {
 	postId := chi.URLParam(r, "postId")
 	id, err := strconv.ParseInt(postId, 10, 64)
+	if err != nil {
+		app.badRequestError(w, r, err)
+		return
+	}
 	ctx := r.Context()
 	post, err := app.store.Posts.GetById(ctx, id)
 	fmt.Println("---", post)
@@ -114,6 +118,10 @@ func (app *application) GetPostByIdMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		postId := chi.URLParam(r, "postId")
 		id, err := strconv.ParseInt(postId, 10, 64)
+		if err != nil {
+			app.badRequestError(w, r, err)
+			return
+		}
 		ctx := r.Context()
 		fmt.Println("00d0d00d", id)
 		post, err := app.store.Posts.GetById(ctx, id)
@@ -184,11 +192,19 @@ func (app *application) updatePostHandler(w http.ResponseWriter, r *http.Request
 	postId := chi.URLParam(r, "postId")
 	ctx := r.Context()
 	id, err := strconv.ParseInt(postId, 10, 64)
+	if err != nil {
+		app.badRequestError(w, r, err)
+		return
+	}
 	post, err := app.store.Posts.GetById(ctx, id)
 	if err != nil {
 		fmt.Println(err.Error(), "-------")
 	}
 	err = ReadJSON(w, r, &updatePayload)
+	if err != nil {
+		app.intertalServerError(w, r, err)
+		return
+	}
 	if updatePayload.Title != "" {
 		post.Title = updatePayload.Title
 	} else if updatePayload.Message != "" {
@@ -196,14 +212,12 @@ func (app *application) updatePostHandler(w http.ResponseWriter, r *http.Request
 	} else if updatePayload.Tags != nil {
 		post.Tags = updatePayload.Tags
 	}
-	if err != nil {
-		fmt.Println("READ JSON ERROR:", err)
-		app.badRequestError(w, r, err)
-		return
-	}
 
 	err = Validate.Struct(post)
-
+	if err != nil {
+		app.intertalServerError(w, r, err)
+		return
+	}
 	fmt.Println("goasofoas", id)
 	updatedPost, err := app.store.Posts.UpdatePost(ctx, id, post)
 	if err != nil {
