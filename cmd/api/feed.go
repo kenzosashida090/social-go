@@ -35,6 +35,10 @@ func (app *application) getUserFeedHandler(w http.ResponseWriter, r *http.Reques
 	}
 	fq, err := fq.Parse(r)
 	fmt.Println("----FQ FROM FEED---- ", fq)
+	if err != nil {
+		app.badRequestError(w, r, err)
+		return
+	}
 	feed, err := app.store.Posts.GetUserFeed(ctx, int64(320), fq)
 
 	fmt.Println(feed, "-----FEED-----")
