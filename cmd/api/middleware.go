@@ -39,7 +39,7 @@ func (app *application) BasicAuthMiddleware() func(http.Handler) http.Handler {
 			creds := strings.SplitN(string(decode), ":", 2)
 			fmt.Println(creds, "CREDS")
 			if len(creds) != 2 || creds[0] != username || creds[1] != password {
-				app.unAuthorizeResponse(w, r, fmt.Errorf("Fail to auth"))
+				app.unAuthorizeResponse(w, r, fmt.Errorf("fail to auth"))
 				return
 			}
 			next.ServeHTTP(w, r)
@@ -52,12 +52,12 @@ func (app *application) AuthUserMiddleware(next http.Handler) http.Handler {
 
 		authHeader := r.Header.Get("Authorization")
 		if authHeader == "" {
-			app.unAuthorizeRequest(w, r, fmt.Errorf("not available for this moment."))
+			app.unAuthorizeRequest(w, r, fmt.Errorf("not available for this moment"))
 			return
 		}
 		parts := strings.Split(authHeader, " ")
 		if len(parts) != 2 || parts[0] != "Bearer" {
-			app.unAuthorizeRequest(w, r, fmt.Errorf("not available for this moment."))
+			app.unAuthorizeRequest(w, r, fmt.Errorf("not available for this moment"))
 			return
 		}
 		jwtToken, err := app.authenticator.ValidateToken(parts[1])
