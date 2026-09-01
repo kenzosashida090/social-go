@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.1.0](https://github.com/kenzosashida090/social-go/compare/v1.0.0...v1.1.0) (2026-09-01)
+
+
+### Features
+
+* Change version of app based on changelog ([b90e990](https://github.com/kenzosashida090/social-go/commit/b90e990fc8ece30b0f5821d991a02ae7d82890f9))
+
+
+### Bug Fixes
+
+* Fix deprecated declaration pon the workflow ([1311a1f](https://github.com/kenzosashida090/social-go/commit/1311a1fc2e5a4c2d9cdc38a1954905e39d1ffa00))
+
 ## 1.0.0 (2026-09-01)
 
 
