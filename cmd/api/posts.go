@@ -161,6 +161,9 @@ func (app *application) deletePostHandler(w http.ResponseWriter, r *http.Request
 	postId := chi.URLParam(r, "postId")
 	fmt.Println(postId, "from delete")
 	id, err := strconv.ParseInt(postId, 10, 64)
+	if err != nil {
+		WriteJSONError(w, http.StatusBadRequest, "Something went wrong")
+	}
 	fmt.Println(postId, "-----")
 	ctx := r.Context()
 	err = app.store.Posts.DeleteById(ctx, id)
