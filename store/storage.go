@@ -11,8 +11,8 @@ var (
 	InternalErrorServer    = errors.New("something went wrong.")
 	ErrNotFound            = errors.New("record not found")
 	QueryTimeoutDuration   = time.Second * 5
-	ErrDuplicateEmail      = errors.New("Duplicated Email")
-	ErrDupliucatedUsername = errors.New("Duplicated Username")
+	ErrDuplicateEmail      = errors.New("duplicated Email")
+	ErrDupliucatedUsername = errors.New("duplicated Username")
 )
 
 func ErrorFactoryDB(err error) error {
