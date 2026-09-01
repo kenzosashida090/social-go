@@ -28,10 +28,7 @@ func (p *Password) Set(text string) error {
 func (p *Password) Compare(text string, hash []byte) bool {
 
 	err := bcrypt.CompareHashAndPassword(hash, []byte(text))
-	if err != nil {
-		return false
-	}
-	return true
+	return err == nil
 }
 
 type UsersStorage struct {
