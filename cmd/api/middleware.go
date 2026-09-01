@@ -19,18 +19,18 @@ func (app *application) BasicAuthMiddleware() func(http.Handler) http.Handler {
 			authHeader := r.Header.Get("Authorization")
 			if authHeader == "" {
 				fmt.Println("BAD CHOICES")
-				app.unAuthorizeResponse(w, r, fmt.Errorf("Unavailable to authorize user"))
+				app.unAuthorizeResponse(w, r, fmt.Errorf("unavailable to authorize user"))
 				return
 			}
 			parts := strings.Split(authHeader, " ")
 			fmt.Println(parts)
 			if len(parts) != 2 || parts[0] != "Basic" {
-				app.unAuthorizeResponse(w, r, fmt.Errorf("Unavailable to authorize the header"))
+				app.unAuthorizeResponse(w, r, fmt.Errorf("unavailable to authorize the header"))
 				return
 			}
 			decode, err := base64.StdEncoding.DecodeString(parts[1])
 			if err != nil {
-				app.unAuthorizeResponse(w, r, fmt.Errorf("Unavailable to authorize"))
+				app.unAuthorizeResponse(w, r, fmt.Errorf("unavailable to authorize"))
 				return
 			}
 			username := app.config.auth.basic.username
@@ -52,29 +52,33 @@ func (app *application) AuthUserMiddleware(next http.Handler) http.Handler {
 
 		authHeader := r.Header.Get("Authorization")
 		if authHeader == "" {
-			app.unAuthorizeRequest(w, r, fmt.Errorf("Not available for this moment."))
+			app.unAuthorizeRequest(w, r, fmt.Errorf("not available for this moment."))
 			return
 		}
 		parts := strings.Split(authHeader, " ")
 		if len(parts) != 2 || parts[0] != "Bearer" {
-			app.unAuthorizeRequest(w, r, fmt.Errorf("Not available for this moment."))
+			app.unAuthorizeRequest(w, r, fmt.Errorf("not available for this moment."))
 			return
 		}
 		jwtToken, err := app.authenticator.ValidateToken(parts[1])
 		if err != nil {
 			fmt.Println(err.Error())
-			app.unAuthorizeRequest(w, r, fmt.Errorf("Unavailable"))
+			app.unAuthorizeRequest(w, r, fmt.Errorf("unavailable"))
 			return
 		}
 		claims, _ := jwtToken.Claims.(jwt.MapClaims)
 		userId, err := strconv.ParseInt(fmt.Sprintf("%.f", claims["sub"]), 10, 64)
 		fmt.Println(userId, "---------")
 		if err != nil {
-			app.unAuthorizeRequest(w, r, fmt.Errorf("Unavailable"))
+			app.unAuthorizeRequest(w, r, fmt.Errorf("unavailable"))
 			return
 		}
 		ctx := r.Context()
 		user, err := app.getUser(ctx, userId)
+		if err != nil {
+			app.badRequestError(w, r, err)
+			return
+		}
 		ctx = context.WithValue(ctx, userCtx, user)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
@@ -127,7 +131,7 @@ func (app *application) ReateLimiterMiddleware(next http.Handler) http.Handler {
 			fmt.Println("cace ratellimit empty")
 			rateType++
 			fmt.Printf("rateLimiter: %#v\n", app.rateLimiter)
-			if allow, retryAfter := app.rateLimiter.Allow(rateType, 40); !allow {
+			if allow, retryAfter := app.rateLimiter.Allow(rateType, limit); !allow {
 				app.rateLimitExceededResponse(w, r, retryAfter.String())
 				return
 			}
