@@ -1,0 +1,61 @@
+# Binaries and build artifacts
+bin/
+tmp/
+**/tmp/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+build-errors.log
+*.log
+
+# Environment and secrets
+.env
+.env.*
+.envrc
+.env.local
+.env.development
+.env.production
+.env.test
+*.secret
+secrets/
+credentials.json
+credentials.yml
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa
+id_rsa.*
+*.crt
+
+# Local config overrides
+config.local.*
+*.local.yaml
+*.local.yml
+*.local.json
+
+# Database dumps and backups
+*.sql.gz
+*.dump
+*.backup
+
+# Test and coverage output
+coverage.out
+coverage.html
+*.coverprofile
+
+# IDE and OS
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Go
+vendor/

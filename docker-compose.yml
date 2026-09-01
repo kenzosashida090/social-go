@@ -1,0 +1,41 @@
+
+
+services:
+  db:
+    image: postgres:16.3
+    container_name: postgres-db
+    environment:
+        POSTGRES_DB: socialnet
+        POSTGRES_USER: user
+        POSTGRES_PASSWORD: adminpassword
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  redis-user:
+    image: redis:latest
+    container_name: social-user-redis
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis-user:/data
+    environment:
+      - REDIS_ARGS:--requirepass engoku42 --appendonly yes
+    restart: unless-stopped
+  redis-limiter:
+    image: redis:latest
+    container_name: redis_ratelimiter_store
+    restart: unless-stopped
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis-limiter:/data
+    environment:
+      - REDIS_ARGS:--requirepass engouku42 --appendonly yes
+volumes:
+  db-data:
+  redis-user:
+    driver: local
+  redis-limiter:
+    driver: local
+    

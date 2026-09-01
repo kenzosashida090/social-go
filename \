@@ -1,0 +1,43 @@
+package main
+
+import (
+	"net/http"
+
+	"github.com/kenzosashida090/social/store"
+)
+
+type CreatePostPayload struct {
+	Title   string   `json:"title"`
+	Message string   `json:"message"`
+	Tags    []string `json:"tags"`
+}
+
+func (app *application) createPostHandler(w http.ResponseWriter, r *http.Request) {
+	var payload CreatePostPayload
+
+	err := ReadJSON(w, r, &payload)
+	if err != nil {
+		WriteJSONError(w, http.StatusBadRequest, err.Error())
+	}
+	post := &store.Post{
+		Title:   payload.Title,
+		Content: payload.Message,
+		Tags:    payload.Tags,
+		UserID:  1,
+	}
+	ctx := r.Context()
+	err = app.store.Posts.Create(ctx, post)
+	if err != nil {
+		WriteJSONError(w, http.StatusInternalServerError, err.Error())
+	}
+}
+
+func (app *application) getPostIdHandler(w http.ResponseWriter, r *http.Request) {
+	postId := 1
+	ctx := r.Context()
+	post, err := app.store.Posts.GetById(ctx, postId)
+	if err != nil {
+		WriteJSONError(w, http.StatusBadRequest, err.Error())
+	}
+	println(post)
+}
