@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	InternalErrorServer    = errors.New("something went wrong.")
+	ErrInternalServer      = errors.New("something went wrong")
 	ErrNotFound            = errors.New("record not found")
 	QueryTimeoutDuration   = time.Second * 5
 	ErrDuplicateEmail      = errors.New("duplicated Email")
@@ -24,7 +24,7 @@ func ErrorFactoryDB(err error) error {
 	case err.Error() == `pq: duplicated key value vioates unique constraint "users_username_key"`:
 		return ErrDupliucatedUsername
 	default:
-		return InternalErrorServer
+		return ErrInternalServer
 	}
 
 }
